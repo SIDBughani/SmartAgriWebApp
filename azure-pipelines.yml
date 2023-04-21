@@ -44,9 +44,3 @@ steps:
     appName: '<SmartAgriWebApp>'
     package: '$(build.artifactstagingdirectory)/**/*.zip'
     appType: 'webApp'
-
-- task: EmailTask@2
-  inputs:
-    To: 'bughani18@gmail.com'
-    Subject: 'Deployment completed successfully!'
-    Body: 'Your deployment to Azure Web App has completed successfully.'
