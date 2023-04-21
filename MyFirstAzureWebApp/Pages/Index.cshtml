@@ -13,11 +13,11 @@
     .container {
         max-width: 1500px;
         margin: 0 auto;
-        padding: 50px 20px;
+        padding: 20px 20px;
         text-align: center;
     }
     .header {
-        margin-bottom: 50px;
+        margin-bottom: 10px;
     }
     h1 {
         font-size: 3rem;
@@ -28,8 +28,14 @@
     p {
         font-size: 1.2rem;
         margin-bottom: 60px;
-        color: #4B4B4B;
-        font-weight: bold;
+        color: black;
+    }
+    .footer {
+        margin-top: 60px; /* add margin to top */
+        padding: 10px;
+        text-align: center;
+        font-size: 15px;
+        color: black;
     }
     .sensor {
         border: 1px solid #D3D3D3;
@@ -41,17 +47,6 @@
         margin-bottom: 20px;
         color: #4B4B4B;
         font-weight: bold;
-    }
-    iframe {
-        width: 100%;
-        height: 500px;
-        border: none;
-    }
-    .footer {
-        margin-top: 50px;
-        font-size: 0.8rem;
-        color: black;
-        background-color: white;
     }
     .sensor-table {
         margin-top: 20px;
@@ -88,7 +83,7 @@
         </section>
     </main>
 
-<canvas id="sensor-chart"></canvas>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"></script> @* Import Chart.js library for my scatter chart *@
 
 <script>
@@ -101,9 +96,29 @@ var ctx = canvas.getContext('2d');
 // Set the chart options
 var options = {
     scales: {
+        x: {
+            title: {
+                display: true,
+                text: 'SensorData Id',
+                font: {
+                    size: 20,
+                    weight: 'bold',
+                    color: 'black'
+                }
+            }
+        },
         y: {
+            title: {
+                display: true,
+                text: 'Value',
+                font: {
+                    size: 20,
+                    weight: 'bold',
+                    color: 'black'
+                }
+            },
             ticks: {
-                beginAtZero: true
+                beginAtZero: true,
                 }
             }
         }
@@ -133,7 +148,7 @@ fetch('https://smartagrifunctionapp.azurewebsites.net/api/SensorData/?')
 
 var latestData = data.map(function(item) {
     return {
-        Id: item.id,
+        Id: item.id.slice(0,8),
         Temperature: item.Temperature,
         SoilMoisture: item.SoilMoisture,
         Humidity: item.Humidity,
@@ -221,8 +236,100 @@ var latestData = data.map(function(item) {
 }, 5000);
 
 </script>
-    
-    <div class=".footer">
+
+<!-- Import Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+
+<style>
+  /* Add border and padding to table cells */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+  th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  /* Add background color to table header */
+  th {
+    background-color: #f2f2f2;
+  }
+</style>
+
+<div class="container mt-7">
+  <h1>Latest Sensor Data</h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>id</th>
+        <th>Temperature</th>
+        <th>SoilMoisture</th>
+        <th>Humidity</th>
+        <th>Light</th>
+        <th>Rainfall</th>
+        <th>Nutrients</th>
+      </tr>
+    </thead>
+    <tbody id="SensorData"></tbody>
+  </table>
+</div>
+
+<script>
+  // Get the tbody element
+  var tbody = document.getElementById("SensorData");
+
+  // Retrieve the latest sensor data and update the table every 5 seconds
+  setInterval(function() {
+    fetch('https://smartagrifunctionapp.azurewebsites.net/api/SensorData/?')
+      .then(response => response.json())
+      .then(data => {
+        // Clear the tbody element
+        tbody.innerHTML = '';
+
+        // Add a row for each item in the data array
+        data.forEach(function(item) {
+          var row = document.createElement("tr");
+          var id = document.createElement("td");
+          var Temperature = document.createElement("td");
+          var SoilMoisture = document.createElement("td");
+          var Humidity = document.createElement("td");
+          var Light = document.createElement("td");
+          var Rainfall = document.createElement("td");
+          var Nutrients = document.createElement("td");
+
+          // Set the width of the first column
+          id.style.width = "200px";
+          id.style.fontSize = "smaller";
+
+          // Set the text content of each cell
+          id.innerText = item.id;
+          Temperature.innerText = item.Temperature.toFixed(3);
+          SoilMoisture.innerText = item.SoilMoisture.toFixed(3);
+          Humidity.innerText = item.Humidity.toFixed(3);
+          Light.innerText = item.Light.toFixed(3);
+          Rainfall.innerText = item.Rainfall.toFixed(3);
+          Nutrients.innerText = item.Nutrients.toFixed(3);
+
+          // Append the cells to the row
+          row.appendChild(id);
+          row.appendChild(Temperature);
+          row.appendChild(SoilMoisture);
+          row.appendChild(Humidity);
+          row.appendChild(Light);
+          row.appendChild(Rainfall);
+          row.appendChild(Nutrients);
+          
+          // Append the row to the body
+          tbody.appendChild(row);
+        });
+      });
+  }, 5000);
+</script>
+
+ <div class="footer">
+    <br>
         <p>Copyright © Smart Agriculture Monitoring System</p>
     </div>
-</div>
