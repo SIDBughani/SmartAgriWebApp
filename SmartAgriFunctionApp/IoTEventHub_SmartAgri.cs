@@ -14,8 +14,10 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Collections;
 using System;
+using System.Threading.Tasks;
+using System.Net;
 
-namespace smartagristorageaccount
+namespace smartagrifunctions2467b0
 {
     
     public class SensorData
@@ -27,7 +29,6 @@ namespace smartagristorageaccount
         public double SoilMoisture { get; set; }
         public double Light { get; set; }
         public double Nutrients { get; set; }
-        public double CO2 { get; set; }
         public double? Rainfall { get; set; }
     }
 
@@ -52,7 +53,6 @@ namespace smartagristorageaccount
             double? light = data.light;
             double? nutrients = data.nutrients;
             double? rainfall = data.rainfall;
-            double? co2 = data.co2;
 
     output = new SensorData();
 
@@ -76,10 +76,6 @@ namespace smartagristorageaccount
     {
         output.Nutrients = (double)nutrients.Value;
     }
-        if (co2.HasValue)
-    {
-        output.CO2 = (double)co2.Value;
-    }
        if (rainfall.HasValue)
     {
         output.Rainfall = (double)rainfall.Value;
@@ -94,7 +90,7 @@ namespace smartagristorageaccount
         [CosmosDB(databaseName: "IoTData",
                   collectionName: "SensorData",
                   ConnectionStringSetting = "cosmosDBConnectionString",
-                      SqlQuery = "SELECT * FROM c")] IEnumerable<dynamic> SensorData,
+                      SqlQuery = "SELECT TOP 5 c.id, c.Temperature, c.SoilMoisture, c.Humidity, c.Light, c.Nutrients, c.Rainfall FROM c ORDER BY c._ts DESC")] IEnumerable<dynamic> SensorData,
                   ILogger log)
       {
         return new OkObjectResult(SensorData);

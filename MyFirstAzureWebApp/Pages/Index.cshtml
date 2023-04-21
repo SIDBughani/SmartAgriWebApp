@@ -1,11 +1,228 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Smart Agriculture Monitoring System";
 }
+<style>
+    body {
+        background: linear-gradient(to bottom, #7ee3cd, rgb(64, 214, 117), #4d82e4);
+        font-family: "Roboto", sans-serif;
+        
+  }
+ 
+    .container {
+        max-width: 1500px;
+        margin: 0 auto;
+        padding: 50px 20px;
+        text-align: center;
+    }
+    .header {
+        margin-bottom: 50px;
+    }
+    h1 {
+        font-size: 3rem;
+        margin-bottom: 10px;
+        color: #4B4B4B;
+        font-weight: bold;
+    }
+    p {
+        font-size: 1.2rem;
+        margin-bottom: 60px;
+        color: #4B4B4B;
+        font-weight: bold;
+    }
+    .sensor {
+        border: 1px solid #D3D3D3;
+        padding: 20px;
+        background-color: #FFFFFF;
+    }
+    h2 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        color: #4B4B4B;
+        font-weight: bold;
+    }
+    iframe {
+        width: 100%;
+        height: 500px;
+        border: none;
+    }
+    .footer {
+        margin-top: 50px;
+        font-size: 0.8rem;
+        color: black;
+        background-color: white;
+    }
+    .sensor-table {
+        margin-top: 20px;
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .sensor-table th,
+    .sensor-table td {
+        padding: 10px;
+        border: 1px solid #D3D3D3;
+        text-align: left;
+        font-size: 1.2rem;
+        color: #4B4B4B;
+    }
+    .sensor-table th {
+        background-color: #F5F5F5;
+        font-weight: bold;
+    }
+    .sensor-table td {
+        white-space: pre-wrap;
+    }
 
-<div class="text-center">
-    <h1 class="display-4">Last Sensor Value</h1>
-    <p></p>
-    <iframe src="http://localhost:7071/api/SensorData/"></iframe>
+</style>
+<div class="container">
+    <header>
+        <h1>Smart Agriculture Monitoring System</h1>
+        <p>Welcome to the Smart Agriculture Monitoring System! Our state-of-the-art system harnesses the power of a sophisticated network of advanced sensors to deliver unparalleled real-time monitoring of critical environmental parameters. These include soil moisture, temperature, humidity, light, nutrient, and rainfall levels. Through continuous monitoring of these parameters, farmers and growers are empowered to make informed decisions that drive crop growth, minimize waste, and maximize yields. Our cloud-based system offers a secure and reliable data storage solution, which provides authorized users with easy access to their critical data. This means that farmers and growers can monitor environmental conditions and receive timely alerts in the event of any deviations, thereby enabling them to take corrective action and ensure optimal crop health and yield. The Smart Agriculture Monitoring System also leverages sophisticated data analytics to provide valuable insights into long-term trends, enabling farmers and growers to make data-driven decisions and continuously improve their operations. Our cutting-edge technology and unparalleled expertise provide an unmatched level of precision and accuracy, allowing farmers and growers to remain at the forefront of sustainable and efficient agriculture.</p>
+    </header>
+    
+    <main>
+        <section class="sensor">
+        <h2>Latest Sensor Values</h2>
+        <canvas id="sensor-chart"></canvas>
+        </section>
+    </main>
+
+<canvas id="sensor-chart"></canvas>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"></script> @* Import Chart.js library for my scatter chart *@
+
+<script>
+// Get the canvas element
+var canvas = document.getElementById('sensor-chart');
+
+// Get the context of the canvas element
+var ctx = canvas.getContext('2d');
+
+// Set the chart options
+var options = {
+    scales: {
+        y: {
+            ticks: {
+                beginAtZero: true
+                }
+            }
+        }
+    };
+
+// Create the chart with the initial data
+var chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [],
+        datasets: [{
+            label: 'Latest Sensor Values',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1,
+            data: []
+        }]
+    },
+    options: options
+});
+
+// Retrieve the latest sensor values and update the chart every 5 seconds
+setInterval(function() {
+fetch('https://smartagrifunctionapp.azurewebsites.net/api/SensorData/?')
+.then(response => response.json())
+.then(function(data) {
+
+var latestData = data.map(function(item) {
+    return {
+        Id: item.id,
+        Temperature: item.Temperature,
+        SoilMoisture: item.SoilMoisture,
+        Humidity: item.Humidity,
+        Light: item.Light,
+        Rainfall: item.Rainfall,
+        Nutrients: item.Nutrients
+        }
+    });
+    
+    var labels = [];
+    
+    var temperatureValues = [];
+    var soilmoistureValues = [];
+    var humidityValues = [];
+    var lightValues = [];
+    var rainfallValues = [];
+    var nutrientsValues = [];
+    
+    latestData.forEach(function(item) {
+        labels.push(item.Id);
+        temperatureValues.push(item.Temperature);
+        soilmoistureValues.push(item.SoilMoisture);
+        humidityValues.push(item.Humidity);
+        lightValues.push(item.Light);
+        rainfallValues.push(item.Rainfall);
+        nutrientsValues.push(item.Nutrients);
+        });
+        
+    // Reset the chart data
+        chart.data.labels.splice(0, chart.data.labels.length);
+        chart.data.labels.push(...labels);
+        
+        chart.data.labels = labels;
+        chart.data.datasets = [];
+        chart.data.datasets.push({
+            label: 'Temperature',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 2,
+            data: temperatureValues
+            });
+            
+        chart.data.datasets.push({
+            label: 'Soil Moisture',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 2,
+            data: soilmoistureValues
+            });
+        
+        chart.data.datasets.push({
+            label: 'Humidity',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 2,
+            data: humidityValues
+            });
+        
+        chart.data.datasets.push({
+            label: 'Light',
+            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+            borderColor: 'rgba(255, 206, 86, 1)',
+            borderWidth: 2,
+            data: lightValues
+            });
+
+        chart.data.datasets.push({
+            label: 'Rainfall',
+            backgroundColor: 'rgba(153, 102, 255, 0.2)',
+            borderColor: 'rgba(153, 102, 255, 1)',
+            borderWidth: 2,
+            data: rainfallValues
+            });
+            
+        chart.data.datasets.push({
+            label: 'Nutrients',
+            backgroundColor: 'rgba(255, 159, 64, 0.2)',
+            borderColor: 'rgba(255, 159, 64, 1)',
+            borderWidth: 2,
+            data: nutrientsValues
+            });
+            
+        chart.update();
+    });
+}, 5000);
+
+</script>
+    
+    <div class=".footer">
+        <p>Copyright © Smart Agriculture Monitoring System</p>
+    </div>
 </div>
