@@ -10,7 +10,7 @@ steps:
       sudo npm install -g mocha
     displayName: 'Initialise and install NPM packages'
   - script: |
-      mocha test --reporter mocha-junit-reporter
+      /usr/local/lib/node_modules/mocha/bin/mocha test --reporter mocha-junit-reporter
     displayName: 'Run unit tests with Mocha'
   - script: |
       npm install
@@ -24,14 +24,14 @@ steps:
       testRunner: JUnit
       testResultsFiles: $(System.DefaultWorkingDirectory)/test-results.xml
   - script: |
-     nyc --reporter=cobertura --reporter=html \
+     nyc --reporter=cobertura --reporter=html
      npm test -- --reporter mocha-junit-reporter --reporter-options mochaFile=./test-results.xml
     displayName: 'Build code coverage report'
   - task: PublishCodeCoverageResults@1
     inputs: 
       codeCoverageTool: Cobertura # or JaCoCo
       summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
-      reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
+      reportDirectory: '$(System.DefaultWorkingDirectory)//coverage'
   - task: ArchiveFiles@2
     displayName: 'Archive sources'
     inputs:
