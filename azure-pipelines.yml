@@ -13,66 +13,49 @@ resources:
       tags:
       - Verified
       - Signed
-    jobs:
-    - job: BuildAndDeploy
-      displayName: 'Build and Deploy'
-      pool:
-        vmImage: 'ubuntu-latest'
-      variables:
-        solution: '**/*.sln'
-        buildConfiguration: 'Release'
-      stages:
-      - stage: Production
-        displayName: 'Deploy to Production'
-        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'releases/main'))
-        steps:
-        - task: DotNetCoreCLI@2
-          inputs:
-            command: 'build'
-            projects: '**/*.csproj'
-            arguments: '--configuration $(buildConfiguration)'
-        - task: DotNetCoreCLI@2
-          inputs:
-            command: 'test'
-            projects: '**/*Tests.csproj'
-            arguments: '--configuration $(buildConfiguration)'
-        - task: DotNetCoreCLI@2
-          displayName: 'Publish Artifact'
-          inputs:
-            command: 'publish'
-            publishWebProjects: true
-            arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)'
-            zipAfterPublish: true
-        - task: AzureWebApp@1
-          inputs:
-            azureSubscription: 'CMP9785_Siddharth_26453965'
-            appName: 'SmartAgriWebApp'
-            package: '$(build.artifactstagingdirectory)/**/*.zip'
-            appType: 'webApp'
-      - stage: PreProduction
-        displayName: 'Deploy to Pre-Production'
-        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'releases/*'))
-        steps:
-        - task: DotNetCoreCLI@2
-          inputs:
-            command: 'build'
-            projects: '**/*.csproj'
-            arguments: '--configuration $(buildConfiguration)'
-        - task: DotNetCoreCLI@2
-          inputs:
-            command: 'test'
-            projects: '**/*Tests.csproj'
-            arguments: '--configuration $(buildConfiguration)'
-        - task: DotNetCoreCLI@2
-          displayName: 'Publish Artifact'
-          inputs:
-            command: 'publish'
-            publishWebProjects: true
-            arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)'
-            zipAfterPublish: true
-        - task: AzureWebApp@1
-          inputs:
-            azureSubscription: 'CMP9785_Siddharth_26453965'
-            appName: 'SmartAgriWebApp-Pre'
-            package: '$(build.artifactstagingdirectory)/**/*.zip'
-            appType: 'webApp'
+
+jobs:
+- job: Build_and_Deploy
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  variables:
+    solution: '**/*.sln'
+    buildConfiguration: 'Release'
+
+  steps:
+  - task: NuGetToolInstaller@1
+    displayName: 'Install NuGet'
+
+  - task: NuGetCommand@2
+    inputs:
+      command: 'restore'
+      restoreSolution: '$(solution)'
+      feedsToUse: 'select'
+
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'build'
+      projects: '**/*.csproj'
+      arguments: '--configuration $(buildConfiguration)'
+
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'test'
+      projects: '**/*Tests.csproj'
+      arguments: '--configuration $(buildConfiguration)'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Publish Artifact'
+    inputs:
+      command: 'publish'
+      publishWebProjects: true
+      arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)'
+      zipAfterPublish: true
+
+  - task: AzureWebApp@1
+    inputs:
+      azureSubscription: 'CMP9785_Siddharth_26453965'
+      appName: 'SmartAgriWebApp'
+      package: '$(build.artifactstagingdirectory)/**/*.zip'
+      appType: 'webApp'
