@@ -3,24 +3,38 @@ pool:
 trigger:
   - master
 steps:
-  - task: CopyFiles@2
-    displayName: 'Copy Files to: $(build.artifactstagingdirectory)/Templates'
+  - task: Npm@1
+    displayName: 'Install NPM packages'
     inputs:
-      SourceFolder: ./
-      Contents: '**/*.json'
-      TargetFolder: '$(build.artifactstagingdirectory)/Templates'
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '14.x'
-    displayName: 'Install Node.js'
+      command: 'custom'
+      customCommand: 'install'
+      workingDir: '$(System.DefaultWorkingDirectory)/myapp'
   - script: |
-      npm install
-      npm run build
-    displayName: 'npm install and build'
+      npm test
+    displayName: 'Run unit tests'
+    continueOnError: 'true'
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results'
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '$(System.DefaultWorkingDirectory)/test-report.xml'
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Code Coverage'
+    condition: 'in(variables[''Agent.JobStatus''], ''Succeeded'')'
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/*coverage.xml'
+      reportDirectory: '$(System.DefaultWorkingDirectory)/coverage'
   - task: ArchiveFiles@2
-    displayName: 'Archive $(Build.SourcesDirectory)'
+    displayName: 'Archive sources'
     inputs:
       rootFolderOrFile: '$(Build.SourcesDirectory)'
       includeRootFolder: false
+  - task: CopyFiles@2
+    displayName: 'Copy ARM templates'
+    inputs:
+      SourceFolder: 'deployment'
+      Contents: '*.json'
+      TargetFolder: '$(build.artifactstagingdirectory)/Templates'
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact: drop'
