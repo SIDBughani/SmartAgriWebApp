@@ -1,4 +1,4 @@
-[![Build Status](https://dev.azure.com/26453965/SmartAgriFirstAzureWebApp/_apis/build/status%2FSIDBughani.SmartAgriWebApp?branchName=Cannot%20fork%20because%20you%20own%20this%20repository%20and%20are%20not%20a%20member%20of%20any%20organizations.)](https://dev.azure.com/26453965/SmartAgriFirstAzureWebApp/_build/latest?definitionId=4&branchName=Cannot%20fork%20because%20you%20own%20this%20repository%20and%20are%20not%20a%20member%20of%20any%20organizations.)
+[![Build Status](https://dev.azure.com/26453965/SmartAgriFirstAzureWebApp/_apis/build/status%2FSIDBughani.SmartAgriWebApp?branchName=main)](https://dev.azure.com/26453965/SmartAgriFirstAzureWebApp/_build/latest?definitionId=4&branchName=main)
 
 # Read device-to-cloud messages
 
