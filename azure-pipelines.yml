@@ -8,7 +8,6 @@ steps:
     inputs:
       command: 'custom'
       customCommand: 'install'
-      workingDir: '$(System.DefaultWorkingDirectory)/myapp'
   - script: |
       npm test
     displayName: 'Run unit tests'
