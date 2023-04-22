@@ -1,4 +1,5 @@
 pool:
+  vmImage: 'windows-latest'
   trigger: 
     - main
 steps:
@@ -17,14 +18,13 @@ steps:
   - task: CmdLine@2   
     inputs:
       script: 'npm test -- --reporter mocha-junit-reporter --reporter-options mochaFile=./test-results.xml'
-    vmImage: 'windows-latest'
 
   - task: PublishTestResults@1
     displayName: 'Publish Test Results'
     condition: succeededOrFailed()
     inputs:
-      - testRunner: JUnit
-        testResultsFiles: '$(System.DefaultWorkingDirectory)/test-results.xml'
+      testRunner: JUnit
+      testResultsFiles: '$(System.DefaultWorkingDirectory)/test-results.xml'
 
   - script: |
        npm install --save-dev jest jest-junit
