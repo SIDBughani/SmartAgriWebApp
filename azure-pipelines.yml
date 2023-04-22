@@ -2,7 +2,7 @@ resources:
   pipelines:
   - pipeline: SmartAgriWebApp
     project: DevOpsProject
-    source: SmartAgriWebApp-CI
+    source: SIDBughani.SmartAgriWebApp
     trigger:
       branches:
         include:
