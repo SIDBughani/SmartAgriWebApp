@@ -1,54 +1,39 @@
 pool:
   vmImage: 'windows-latest'
-
 trigger:
   - main
+steps:
+  - script: |
+      npm init --yes
+      sudo npm install
+      sudo npm config set
+    displayName: 'Initialise and install NPM packages'
+  - script: |
+      npm install
+      npm test
+    displayName: 'Run unit tests'
+    continueOnError: 'true'
+  - task: PublishTestResults@1
+    displayName: 'Publish Test Results'
+    condition: succeededOrFailed()
+    inputs:
+      testRunner: JUnit
+      testResultsFiles: $(System.DefaultWorkingDirectory)/test-results.xml
+  - script: |
+     npm install --save-dev jest jest-junit
+     npm install --save-dev nyc
+     nyc --reporter=html --reporter=cobertura node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit
+    displayName: 'Build code coverage report'
+  - task: PublishCodeCoverageResults@1
+    inputs: 
+      codeCoverageTool: Cobertura # or JaCoCo
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
+      reportDirectory: '$(System.DefaultWorkingDirectory)//coverage'
+  - task: ArchiveFiles@2
+    displayName: 'Archive sources'
+    inputs:
+        rootFolderOrFile: $(Build.SourcesDirectory)
+        includeRootFolder: false
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: drop'
 
-jobs:
-  - job: Test
-    displayName: 'Test'
-    steps:
-      - script: |
-          npm init --yes
-          sudo npm install
-          sudo npm config set
-        displayName: 'Initialise and install NPM packages'
-      - script: |
-          npm install
-          npm test
-        displayName: 'Run unit tests'
-        continueOnError: 'true'
-      - task: PublishTestResults@1
-        displayName: 'Publish Test Results'
-        condition: succeededOrFailed()
-        inputs:
-          testRunner: JUnit
-          testResultsFiles: $(System.DefaultWorkingDirectory)/test-results.xml
-      - script: |
-         npm install --save-dev jest jest-junit
-         npm install --save-dev nyc
-         nyc --reporter=html --reporter=cobertura node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit
-        displayName: 'Build code coverage report'
-      - task: PublishCodeCoverageResults@1
-        inputs: 
-          codeCoverageTool: Cobertura # or JaCoCo
-          summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
-          reportDirectory: '$(System.DefaultWorkingDirectory)//coverage'
-
-  - job: Build
-    dependsOn: Test
-    displayName: 'Build'
-    steps:
-      - task: VSBuild@1
-        displayName: 'Build solution'
-        inputs:
-          solution: '**/*.sln'
-          platform: 'Any CPU'
-          configuration: 'Release'
-      - task: ArchiveFiles@2
-        displayName: 'Archive sources'
-        inputs:
-            rootFolderOrFile: $(Build.SourcesDirectory)
-            includeRootFolder: false
-      - task: PublishBuildArtifacts@1
-        displayName: 'Publish Artifact: drop'
