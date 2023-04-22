@@ -6,6 +6,7 @@ steps:
   - script: |
       npm init --yes
       sudo npm install
+      sudo npm install mocha --save-dev
       sudo npm config set
     displayName: 'Initialise and install NPM packages'
   - task: CmdLine@2
