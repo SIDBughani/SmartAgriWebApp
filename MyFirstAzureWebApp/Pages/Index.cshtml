@@ -41,6 +41,7 @@
         border: 1px solid #D3D3D3;
         padding: 20px;
         background-color: #FFFFFF;
+        gap: 60px;
     }
     h2 {
         font-size: 2rem;
@@ -236,6 +237,154 @@ var latestData = data.map(function(item) {
 }, 5000);
 
 </script>
+
+<main>
+<section class="sensor">
+<div class="chart-container">
+<h2>Irrigation Monitoring</h2>
+<canvas id="Irrigation-chart"></canvas>
+</div>
+<div class="chart-container">
+<h2>Plant Growth and Health Monitoring</h2>
+<canvas id="PGHM-chart"></canvas>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"></script>
+
+<script>
+
+var IrrigationCanvas = document.getElementById('Irrigation-chart').getContext('2d');
+var PGHMCanvas = document.getElementById('PGHM-chart').getContext('2d');
+
+var IrrigationChart = new Chart(IrrigationCanvas, {
+    type: 'bar',
+    data: {
+        labels: [],
+        datasets: [{
+            label: 'SoilMoisture',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 2,
+            data: []
+        },
+        {
+            label: 'Rainfall',
+            backgroundColor: 'rgba(153, 102, 255, 0.2)',
+            borderColor: 'rgba(153, 102, 255, 1)',
+            borderWidth: 2,
+            data: []
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                ticks: {
+                    beginAtZero: true
+                }
+            }
+        }
+    }
+});
+
+var PGHMChart = new Chart(PGHMCanvas, {
+    type: 'bar',
+    data: {
+        labels: [],
+        datasets: [{
+            label: 'Temperature',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 2,
+            data: []
+        },
+        {
+            label: 'Light',
+            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+            borderColor: 'rgba(255, 206, 86, 1)',
+            borderWidth: 2,
+            data: []
+        },
+        {
+            label: 'Humidity',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 2,
+            data: []
+        },
+        {
+            label: 'Nutrients',
+            backgroundColor: 'rgba(255, 159, 64, 0.2)',
+            borderColor: 'rgba(255, 159, 64, 1)',
+            borderWidth: 2,
+            data: []
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                ticks: {
+                    beginAtZero: true
+                }
+            }
+        }
+    }
+});
+
+setInterval(function() {
+    fetch('https://smartagrifunctionapp.azurewebsites.net/api/SensorData/?')
+    .then(response => response.json())
+    .then(data => {
+
+        var latestData = data.map(function(item) {
+            return {
+                Id: item.id.slice(0,8),
+                Temperature: item.Temperature,
+                SoilMoisture: item.SoilMoisture,
+                Humidity: item.Humidity,
+                Light: item.Light,
+                Nutrients: item.Nutrients,
+                Rainfall: item.Rainfall,
+            };
+        });
+
+        var labels = [];
+        var temperatureValues = [];
+        var soilMoistureValues = [];
+        var humidityValues = [];
+        var lightValues = [];
+        var nutrientsValues = [];
+        var rainfallValues = [];
+
+    latestData.forEach(function(data) {
+        labels.push(data.Id);
+        temperatureValues.push(data.Temperature);
+        soilMoistureValues.push(data.SoilMoisture);
+        humidityValues.push(data.Humidity);
+        lightValues.push(data.Light);
+        nutrientsValues.push(data.Nutrients);
+        rainfallValues.push(data.Rainfall);
+    });
+
+    IrrigationChart.data.labels = labels;
+    IrrigationChart.data.datasets[0].data = soilMoistureValues;
+    IrrigationChart.data.datasets[1].data = rainfallValues;
+    IrrigationChart.update();
+
+    PGHMChart.data.labels = labels;
+    PGHMChart.data.datasets[0].data = temperatureValues;
+    PGHMChart.data.datasets[1].data = humidityValues;
+    PGHMChart.data.datasets[2].data = lightValues;
+    PGHMChart.data.datasets[3].data = nutrientsValues;
+    PGHMChart.update();
+
+})
+.catch(err => console.error(err));
+}, 5000);
+</script>
+</section>
+</main>
+
+
 
 <!-- Import Bootstrap CSS -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
