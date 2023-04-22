@@ -17,19 +17,19 @@ steps:
   - task: CmdLine@2   
     inputs:
       script: 'npm test -- --reporter mocha-junit-reporter --reporter-options mochaFile=./test-results.xml'
-  vmImage: 'windows-latest'
+    vmImage: 'windows-latest'
 
   - task: PublishTestResults@1
     displayName: 'Publish Test Results'
     condition: succeededOrFailed()
     inputs:
-      testRunner: JUnit
-      testResultsFiles: '$(System.DefaultWorkingDirectory)/test-results.xml'
+      - testRunner: JUnit
+        testResultsFiles: '$(System.DefaultWorkingDirectory)/test-results.xml'
 
   - script: |
-      npm install --save-dev jest jest-junit
-      npm install --save-dev nyc
-      nyc --reporter=html --reporter=cobertura node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit
+       npm install --save-dev jest jest-junit
+       npm install --save-dev nyc
+       nyc --reporter=html --reporter=cobertura node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit
     displayName: 'Build code coverage report'
 
   - task: PublishCodeCoverageResults@1
