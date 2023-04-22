@@ -9,7 +9,8 @@ steps:
       sudo npm config set
     displayName: 'Initialise and install NPM packages'
   - script: |
-      npm test
+      sudo npm install
+      sudo npm test
     displayName: 'Run unit tests'
     continueOnError: 'true'
   - task: PublishTestResults@2
@@ -32,8 +33,8 @@ steps:
   - task: CopyFiles@2
     displayName: 'Copy ARM templates'
     inputs:
-      SourceFolder: deployment
+      SourceFolder: 'deployment'
       Contents: '*.json'
-      TargetFolder: $(build.artifactstagingdirectory)/Templates
+      TargetFolder: '$(build.artifactstagingdirectory)/Templates'
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact: drop'
