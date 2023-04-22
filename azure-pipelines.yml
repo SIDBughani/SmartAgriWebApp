@@ -1,8 +1,8 @@
 resources:
   pipelines:
-  - pipeline: SmartHotel
+  - pipeline: SmartAgriWebApp
     project: DevOpsProject
-    source: SmartHotel-CI
+    source: SmartAgriWebApp-CI
     trigger:
       branches:
         include:
