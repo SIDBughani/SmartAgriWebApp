@@ -3,11 +3,10 @@ pool:
 trigger:
   - main
 steps:
-  - task: Npm@1
-    displayName: 'Install NPM packages'
-    inputs:
-      command: 'custom'
-      customCommand: 'install'
+  - script: |
+      npm init --yes
+      npm install
+    displayName: 'Initialize and install NPM packages'
   - script: |
       npm test
     displayName: 'Run unit tests'
