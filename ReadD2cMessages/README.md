@@ -1,3 +1,5 @@
+[![Build Status](https://dev.azure.com/26453965/SmartAgriFirstAzureWebApp/_apis/build/status%2FSIDBughani.SmartAgriWebApp?branchName=Cannot%20fork%20because%20you%20own%20this%20repository%20and%20are%20not%20a%20member%20of%20any%20organizations.)](https://dev.azure.com/26453965/SmartAgriFirstAzureWebApp/_build/latest?definitionId=4&branchName=Cannot%20fork%20because%20you%20own%20this%20repository%20and%20are%20not%20a%20member%20of%20any%20organizations.)
+
 # Read device-to-cloud messages
 
 This sample demonstrates how to use the Azure Event Hubs client library for .NET to read messages sent from a device by using the built-in Event Hub that exists by default for every IoT Hub instance.
