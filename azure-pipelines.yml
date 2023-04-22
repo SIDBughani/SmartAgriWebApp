@@ -1,3 +1,22 @@
+resources:
+  pipelines:
+  - pipeline: SmartHotel
+    project: DevOpsProject
+    source: SmartHotel-CI
+    trigger:
+      branches:
+        include:
+        - releases/*
+        - main
+        exclude:
+        - topic/*
+      tags:
+      - Verified
+      - Signed
+    stages:
+    - Production
+    - PreProduction
+
 trigger:
 - main
 
@@ -40,7 +59,7 @@ steps:
 
 - task: AzureWebApp@1
   inputs:
-    azureSubscription: '<CMP9785_Siddharth_26453965>'
-    appName: '<SmartAgriWebApp>'
+    azureSubscription: 'CMP9785_Siddharth_26453965'
+    appName: 'SmartAgriWebApp'
     package: '$(build.artifactstagingdirectory)/**/*.zip'
     appType: 'webApp'
