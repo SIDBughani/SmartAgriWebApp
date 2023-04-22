@@ -14,22 +14,25 @@ steps:
       npm test
     displayName: 'Run unit tests'
     continueOnError: 'true'
-  - task: PublishTestResults@2
+  - task: PublishTestResults@1
     displayName: 'Publish Test Results'
     condition: succeededOrFailed()
     inputs:
-      testResultsFiles: $(System.DefaultWorkingDirectory)/test-report.xml
+      testRunner: JUnit
+      testResultsFiles: $(System.DefaultWorkingDirectory)/test-results.xml
+  - script: |
+     nyc --reporter=cobertura --reporter=html \
+     npm test -- --reporter mocha-junit-reporter --reporter-options mochaFile=./test-results.xml
+    displayName: 'Build code coverage report'
   - task: PublishCodeCoverageResults@1
-    displayName: 'Publish Code Coverage'
-    condition: 'in(variables[''Agent.JobStatus''], ''Succeeded'')'
-    inputs:
-      codeCoverageTool: Cobertura
-      summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/*coverage.xml'
-      reportDirectory: $(System.DefaultWorkingDirectory)/coverage
+    inputs: 
+      codeCoverageTool: Cobertura # or JaCoCo
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
+      reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
   - task: ArchiveFiles@2
     displayName: 'Archive sources'
     inputs:
-      rootFolderOrFile: $(Build.SourcesDirectory)
-      includeRootFolder: false
+        rootFolderOrFile: $(Build.SourcesDirectory)
+        includeRootFolder: false
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact: drop'
