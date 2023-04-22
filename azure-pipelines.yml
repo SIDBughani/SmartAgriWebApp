@@ -5,8 +5,9 @@ trigger:
 steps:
   - script: |
       npm init --yes
-      npm install
-    displayName: 'Initialize and install NPM packages'
+      sudo npm install
+      sudo npm config set
+    displayName: 'Initialise and install NPM packages'
   - script: |
       npm test
     displayName: 'Run unit tests'
@@ -15,24 +16,24 @@ steps:
     displayName: 'Publish Test Results'
     condition: succeededOrFailed()
     inputs:
-      testResultsFiles: '$(System.DefaultWorkingDirectory)/test-report.xml'
+      testResultsFiles: $(System.DefaultWorkingDirectory)/test-report.xml
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish Code Coverage'
     condition: 'in(variables[''Agent.JobStatus''], ''Succeeded'')'
     inputs:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/*coverage.xml'
-      reportDirectory: '$(System.DefaultWorkingDirectory)/coverage'
+      reportDirectory: $(System.DefaultWorkingDirectory)/coverage
   - task: ArchiveFiles@2
     displayName: 'Archive sources'
     inputs:
-      rootFolderOrFile: '$(Build.SourcesDirectory)'
+      rootFolderOrFile: $(Build.SourcesDirectory)
       includeRootFolder: false
   - task: CopyFiles@2
     displayName: 'Copy ARM templates'
     inputs:
-      SourceFolder: 'deployment'
+      SourceFolder: deployment
       Contents: '*.json'
-      TargetFolder: '$(build.artifactstagingdirectory)/Templates'
+      TargetFolder: $(build.artifactstagingdirectory)/Templates
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact: drop'
