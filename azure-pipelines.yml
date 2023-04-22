@@ -33,7 +33,7 @@ steps:
   - task: CopyFiles@2
     displayName: 'Copy ARM templates'
     inputs:
-      SourceFolder: 'SmartAgriWebApp'
+      SourceFolder: 'Smart Agriculture Monitoring System'
       Contents: '*.json'
       TargetFolder: '$(build.artifactstagingdirectory)/Templates'
   - task: PublishBuildArtifacts@1
