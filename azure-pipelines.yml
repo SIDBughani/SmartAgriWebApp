@@ -56,6 +56,6 @@ jobs:
   - task: AzureWebApp@1
     inputs:
       azureSubscription: '<CMP9785_Siddharth_26453965>'
-      appName: '<SmartAgriWebApp>'
+      appName: '<MyFirstAzureWebApp>'
       package: '$(build.artifactstagingdirectory)/**/*.zip'
       appType: 'webApp'
