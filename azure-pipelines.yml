@@ -9,8 +9,8 @@ steps:
       sudo npm config set
     displayName: 'Initialise and install NPM packages'
   - script: |
-      sudo npm install
-      sudo npm test
+      npm install
+      npm test
     displayName: 'Run unit tests'
     continueOnError: 'true'
   - task: PublishTestResults@2
