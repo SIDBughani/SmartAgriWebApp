@@ -1,7 +1,7 @@
 pool:
   vmImage: 'windows-latest'
 trigger:
-  - master
+  - main
 steps:
   - task: Npm@1
     displayName: 'Install NPM packages'
