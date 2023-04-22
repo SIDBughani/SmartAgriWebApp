@@ -1,4 +1,4 @@
-﻿@page
+﻿@page   
 @model IndexModel
 @{
     ViewData["Title"] = "Smart Agriculture Monitoring System";
@@ -7,9 +7,9 @@
     body {
         background: linear-gradient(to bottom, #7ee3cd, rgb(64, 214, 117), #4d82e4);
         font-family: "Roboto", sans-serif;
-        
-  }
- 
+
+}
+
     .container {
         max-width: 1500px;
         margin: 0 auto;
@@ -41,7 +41,7 @@
         border: 1px solid #D3D3D3;
         padding: 20px;
         background-color: #FFFFFF;
-        gap: 60px;
+        margin-top: 50px; /* add margin to top */
     }
     h2 {
         font-size: 2rem;
@@ -69,6 +69,7 @@
     .sensor-table td {
         white-space: pre-wrap;
     }
+
 
 </style>
 <div class="container">
@@ -105,7 +106,7 @@ var options = {
                     size: 20,
                     weight: 'bold',
                     color: 'black'
-                }
+                },
             }
         },
         y: {
@@ -116,7 +117,7 @@ var options = {
                     size: 20,
                     weight: 'bold',
                     color: 'black'
-                }
+                },
             },
             ticks: {
                 beginAtZero: true,
@@ -244,10 +245,13 @@ var latestData = data.map(function(item) {
 <h2>Irrigation Monitoring</h2>
 <canvas id="Irrigation-chart"></canvas>
 </div>
+</section>
+<section class="sensor">
 <div class="chart-container">
 <h2>Plant Growth and Health Monitoring</h2>
 <canvas id="PGHM-chart"></canvas>
 </div>
+</section>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"></script>
 
@@ -261,7 +265,7 @@ var IrrigationChart = new Chart(IrrigationCanvas, {
     data: {
         labels: [],
         datasets: [{
-            label: 'SoilMoisture',
+            label: 'Soil Moisture',
             backgroundColor: 'rgba(75, 192, 192, 0.2)',
             borderColor: 'rgba(75, 192, 192, 1)',
             borderWidth: 2,
@@ -291,13 +295,6 @@ var PGHMChart = new Chart(PGHMCanvas, {
     data: {
         labels: [],
         datasets: [{
-            label: 'Temperature',
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 2,
-            data: []
-        },
-        {
             label: 'Light',
             backgroundColor: 'rgba(255, 206, 86, 0.2)',
             borderColor: 'rgba(255, 206, 86, 1)',
@@ -305,18 +302,25 @@ var PGHMChart = new Chart(PGHMCanvas, {
             data: []
         },
         {
-            label: 'Humidity',
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 2,
-            data: []
+        label: 'Temperature',
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 2,
+        data: []
         },
         {
-            label: 'Nutrients',
-            backgroundColor: 'rgba(255, 159, 64, 0.2)',
-            borderColor: 'rgba(255, 159, 64, 1)',
-            borderWidth: 2,
-            data: []
+        label: 'Humidity',
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 2,
+        data: []
+        },
+        {
+        label: 'Nutrients',
+        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+        borderColor: 'rgba(255, 159, 64, 1)',
+        borderWidth: 2,
+        data: []
         }]
     },
     options: {
@@ -340,33 +344,35 @@ setInterval(function() {
                 Id: item.id.slice(0,8),
                 Temperature: item.Temperature,
                 SoilMoisture: item.SoilMoisture,
+                Rainfall: item.Rainfall,
                 Humidity: item.Humidity,
                 Light: item.Light,
                 Nutrients: item.Nutrients,
-                Rainfall: item.Rainfall,
-            };
+            }
         });
 
         var labels = [];
+    
         var temperatureValues = [];
-        var soilMoistureValues = [];
+        var soilmoistureValues = [];
+        var rainfallValues = [];
         var humidityValues = [];
         var lightValues = [];
         var nutrientsValues = [];
-        var rainfallValues = [];
+    
+    latestData.forEach(function(item) {
+        labels.push(item.Id);
+        temperatureValues.push(item.Temperature);
+        soilmoistureValues.push(item.SoilMoisture);
+        rainfallValues.push(item.Rainfall);
+        humidityValues.push(item.Humidity);
+        lightValues.push(item.Light);
+        nutrientsValues.push(item.Nutrients);
+        });
 
-    latestData.forEach(function(data) {
-        labels.push(data.Id);
-        temperatureValues.push(data.Temperature);
-        soilMoistureValues.push(data.SoilMoisture);
-        humidityValues.push(data.Humidity);
-        lightValues.push(data.Light);
-        nutrientsValues.push(data.Nutrients);
-        rainfallValues.push(data.Rainfall);
-    });
-
+// update the chart data with latest values
     IrrigationChart.data.labels = labels;
-    IrrigationChart.data.datasets[0].data = soilMoistureValues;
+    IrrigationChart.data.datasets[0].data = soilmoistureValues;
     IrrigationChart.data.datasets[1].data = rainfallValues;
     IrrigationChart.update();
 
@@ -378,12 +384,13 @@ setInterval(function() {
     PGHMChart.update();
 
 })
-.catch(err => console.error(err));
-}, 5000);
+    .catch(error => {
+        console.log(error);
+    });
+}, 5000); // update chart data every 5 seconds
 </script>
 </section>
 </main>
-
 
 
 <!-- Import Bootstrap CSS -->
