@@ -8,6 +8,9 @@ steps:
       sudo npm install
       sudo npm config set
     displayName: 'Initialise and install NPM packages'
+  - task: CmdLine@2
+    inputs:
+     script: mocha test --reporter mocha-junit-reporter
   - script: |
       npm install
       npm test
