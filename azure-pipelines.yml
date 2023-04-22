@@ -1,20 +1,22 @@
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'windows-latest'
 trigger:
   - master
 steps:
   - task: CopyFiles@2
     displayName: 'Copy Files to: $(build.artifactstagingdirectory)/Templates'
     inputs:
-      SourceFolder: deployment
-      Contents: '*.json'
+      SourceFolder: ./
+      Contents: '**/*.json'
       TargetFolder: '$(build.artifactstagingdirectory)/Templates'
-  - task: Npm@1
-    displayName: 'npm custom'
+  - task: NodeTool@0
     inputs:
-      command: custom
-      verbose: false
-      customCommand: 'install --production'
+      versionSpec: '14.x'
+    displayName: 'Install Node.js'
+  - script: |
+      npm install
+      npm run build
+    displayName: 'npm install and build'
   - task: ArchiveFiles@2
     displayName: 'Archive $(Build.SourcesDirectory)'
     inputs:
