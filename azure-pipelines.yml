@@ -1,5 +1,5 @@
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'ubuntu-latest'
 trigger:
   - main
 steps:
@@ -31,7 +31,7 @@ steps:
     inputs: 
       codeCoverageTool: Cobertura # or JaCoCo
       summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
-      reportDirectory: '$(System.DefaultWorkingDirectory)//coverage'
+      reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
   - task: ArchiveFiles@2
     displayName: 'Archive sources'
     inputs:
