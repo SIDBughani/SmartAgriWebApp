@@ -90,7 +90,7 @@ namespace smartagrifunctions2467b0
         [CosmosDB(databaseName: "IoTData",
                   collectionName: "SensorData",
                   ConnectionStringSetting = "cosmosDBConnectionString",
-                      SqlQuery = "SELECT TOP 20 c.id, c.Temperature, c.SoilMoisture, c.Humidity, c.Light, c.Rainfall, c.Nutrients FROM c ORDER BY c._ts DESC")] IEnumerable<dynamic> SensorData,
+                      SqlQuery = "SELECT TOP 5 c.id, c.Temperature, c.SoilMoisture, c.Humidity, c.Light, c.Rainfall, c.Nutrients FROM c ORDER BY c._ts DESC")] IEnumerable<dynamic> SensorData,
                   ILogger log)
       {
         return new OkObjectResult(SensorData);
