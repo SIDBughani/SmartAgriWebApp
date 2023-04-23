@@ -5,7 +5,7 @@
 }
 <style>
     body {
-        background: linear-gradient(to bottom, #7ee3cd, rgb(64, 214, 117), #83a8ed);
+        background: linear-gradient(to bottom, rgb(125, 222, 189), rgb(127, 235, 140), #9eece3);
         font-family: "Roboto", sans-serif;
 
 }
@@ -195,8 +195,8 @@ var latestData = data.map(function(item) {
             
         chart.data.datasets.push({
             label: 'Soil Moisture',
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: 'rgba(165, 42, 42, 0.2)',
+            borderColor: 'rgba(165, 42, 42, 1)',
             borderWidth: 2,
             data: soilmoistureValues
             });
@@ -266,8 +266,8 @@ var IrrigationChart = new Chart(IrrigationCanvas, {
         labels: [],
         datasets: [{
             label: 'Soil Moisture',
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: 'rgba(165, 42, 42, 0.2)',
+            borderColor: 'rgba(165, 42, 42, 1)',
             borderWidth: 2,
             data: []
         },
@@ -309,16 +309,16 @@ var PGHMChart = new Chart(PGHMCanvas, {
         data: []
         },
         {
-        label: 'Humidity',
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        borderColor: 'rgba(54, 162, 235, 1)',
+        label: 'Nutrients',
+        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+        borderColor: 'rgba(255, 159, 64, 1)',
         borderWidth: 2,
         data: []
         },
         {
-        label: 'Nutrients',
-        backgroundColor: 'rgba(255, 159, 64, 0.2)',
-        borderColor: 'rgba(255, 159, 64, 1)',
+        label: 'Humidity',
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 2,
         data: []
         }]
@@ -377,10 +377,10 @@ setInterval(function() {
     IrrigationChart.update();
 
     PGHMChart.data.labels = labels;
-    PGHMChart.data.datasets[0].data = temperatureValues;
-    PGHMChart.data.datasets[1].data = humidityValues;
-    PGHMChart.data.datasets[2].data = lightValues;
-    PGHMChart.data.datasets[3].data = nutrientsValues;
+    PGHMChart.data.datasets[0].data = lightValues;
+    PGHMChart.data.datasets[1].data = temperatureValues;
+    PGHMChart.data.datasets[2].data = nutrientsValues;
+    PGHMChart.data.datasets[3].data = humidityValues;
     PGHMChart.update();
 
 })
@@ -404,19 +404,17 @@ setInterval(function() {
     max-width: 800px;
     margin: 0 auto;
     box-shadow: 5 5 20px rgba(1, 1, 1, 0.1);
-    backdrop-filter: blur(500px);
-    -webkit-backdrop-filter: blur(500px);
+    background-color: white;  /* Add background color to table */
+    border-color: black;
     font-weight: 550;
   }
+  
   th, td {
-    padding: 20px;
-    border: 2px solid #ddd;
-    font-size: large;
-  }
-  /* Add background color to table header */
-  th {
-    background-color: #e5e1e1;
-  }
+
+        border: 2px solid #ddd;
+    
+    }
+    
 </style>
 
 <div class="container mt-7">
@@ -461,7 +459,7 @@ setInterval(function() {
           var Nutrients = document.createElement("td");
 
           // Set the width of the first column
-          id.style.width = "200px";
+          id.style.width = "300px";
           id.style.fontSize = "smaller";
 
           // Set the text content of each cell
